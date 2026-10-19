@@ -2,50 +2,55 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aktien-Bot</title>
-<!--
-  PLATZHALTER. Das richtige Dashboard wird in Claude Code gebaut (siehe CLAUDE.md -> "Nächster Schritt").
-  Diese Seite zeigt nur, dass die Daten aus docs/data/ ankommen.
--->
-<style>
-  :root { --bg:#0f1115; --card:#181b22; --text:#e8e6e1; --muted:#8b8f98; --up:#3fb68b; --down:#e5534b; --line:#262a33; }
-  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui, -apple-system, sans-serif; }
-  main { max-width:860px; margin:0 auto; padding:24px 16px 60px; }
-  h1 { font-size:22px; margin:0 0 4px; }
-  .muted { color:var(--muted); }
-  .note { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:16px 0; }
-  table { width:100%; border-collapse:collapse; margin-top:12px; }
-  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); }
-  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
-  .up { color:var(--up); } .down { color:var(--down); }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Linie 200 · Aktien-Bot</title>
+<meta name="description" content="Dashboard und Lernbereich für den Aktien-Bot (Spielgeld, Alpaca Paper Trading).">
+<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0e" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232a78d6'/%3E%3Cpath d='M5 22c5 0 6-9 11-9s6 5 11 2' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M5 18h22' stroke='%23fff' stroke-opacity='.55' stroke-width='2' stroke-dasharray='3 3'/%3E%3C/svg%3E">
+<script>
+  // Gespeichertes Farbschema vor dem ersten Zeichnen setzen (verhindert Aufblitzen)
+  try { const t = localStorage.getItem("l200-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<main>
-  <h1>Aktien-Bot</h1>
-  <div class="muted" id="meta">Lade Daten …</div>
-  <div class="note">Vorläufige Seite. Das richtige Dashboard mit Lernbereich folgt – gebaut in Claude Code.</div>
-  <div id="out"></div>
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="#uebersicht" aria-label="Linie 200 – zur Übersicht">
+      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M5 22c5 0 6-9 11-9s6 5 11 2" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M5 18h22" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-dasharray="3 3"/></svg>
+      <div><b>Linie 200</b><span>Dein Aktien-Bot · nur Spielgeld</span></div>
+    </a>
+    <div class="top-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel umschalten"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+    </div>
+    <nav class="tabs" aria-label="Bereiche">
+      <a href="#uebersicht">Übersicht</a>
+      <a href="#signale">Signale</a>
+      <a href="#depot">Depot &amp; Orders</a>
+      <a href="#backtest">Backtest</a>
+      <a href="#lernen">Lernen</a>
+      <a href="#glossar">Glossar</a>
+      <a href="#einstellungen">Einstellungen</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app" aria-live="polite">
+  <p class="muted">Lade Daten …</p>
 </main>
+
+<footer class="foot">
+  Lernprojekt mit Spielgeld (Alpaca Paper Trading). Keine Anlageberatung. Vergangene Ergebnisse sind keine Garantie für die Zukunft.
+  · <a href="https://github.com/dennisknoepfle1/aktien-bot">Code auf GitHub</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-const fmt = (n, d = 2) => n == null ? "–" : n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
-fetch("data/status.json?" + Date.now()).then(r => r.json()).then(s => {
-  const modes = { handeln: "handelt im Paper-Konto", probelauf: "Probelauf", nur_signale: "nur Signale (keine Alpaca-Schlüssel)" };
-  document.getElementById("meta").textContent =
-    `Stand ${new Date(s.updated).toLocaleString("de-DE")} · Kurse bis ${s.prices_as_of} · Modus: ${modes[s.mode] || s.mode} · Quelle: ${s.data_source}`;
-  let html = "";
-  if (s.account) html += `<div class="note">Depotwert <b>${fmt(s.account.equity)} $</b> · Cash ${fmt(s.account.cash)} $</div>`;
-  if (s.halt_reason) html += `<div class="note down">Not-Aus: ${s.halt_reason}</div>`;
-  html += `<table><tr><th>ETF</th><th class="num">Kurs</th><th class="num">200-Tage-Linie</th><th class="num">Abstand</th><th>Signal</th></tr>`;
-  for (const g of s.signals) {
-    html += `<tr><td><b>${g.symbol}</b><br><span class="muted">${g.name}</span></td>
-      <td class="num">${fmt(g.close)}</td><td class="num">${fmt(g.sma)}</td>
-      <td class="num ${g.distance_pct >= 0 ? "up" : "down"}">${fmt(g.distance_pct, 1)} %</td>
-      <td>${g.in_trend ? "halten" : "Cash"}</td></tr>`;
-  }
-  document.getElementById("out").innerHTML = html + "</table>";
-}).catch(() => { document.getElementById("meta").textContent = "Noch keine Daten – den Bot einmal unter „Actions“ starten."; });
+  // Ersatzquelle, falls cdnjs nicht erreichbar ist
+  if (!window.Chart) document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"><\/script>');
 </script>
+<script src="assets/akademie.js"></script>
+<script src="assets/app.js"></script>
 </body>
 </html>

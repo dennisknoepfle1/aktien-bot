@@ -28,7 +28,11 @@ bot/backtest.py             Backtest seit 2005, schreibt docs/data/backtest.json
 bot/state.json              Höchststand + Not-Aus-Zustand (entsteht beim ersten Lauf mit Schlüsseln)
 .github/workflows/bot.yml       Mo–Fr 15:00 UTC automatisch mit --handeln; manuell: probelauf/handeln
 .github/workflows/backtest.yml  Sonntags + bei Änderung an config/strategy + manuell
-docs/                       GitHub Pages (Branch main, Ordner /docs) – das Dashboard
+docs/                       GitHub Pages (Branch main, Ordner /docs) – das Dashboard „Linie 200“
+docs/index.html             Seitengerüst + Navigation
+docs/assets/app.js          Alle Ansichten, Charts (Chart.js 4.4.1 von cdnjs), Formatierung, Router (#uebersicht …)
+docs/assets/akademie.js     Lektionen, Quiz, Abschlusstest, Glossar (Inhalte)
+docs/assets/style.css       Design, Hell/Dunkel
 docs/data/                  JSON-Daten, vom Bot geschrieben (nicht von Hand ändern)
 ```
 
@@ -82,9 +86,9 @@ Alle Prozentwerte in `backtest.json` und `history.invested` sind Dezimalzahlen; 
 - [x] Platzhalter-Seite `docs/index.html`
 - [ ] Dennis: Alpaca-Paper-Konto + Secrets + GitHub Pages einrichten (siehe README.md)
 - [ ] Erster echter Backtest und Bot-Lauf über „Actions“
-- [ ] **Dashboard bauen** (nächster Schritt, siehe unten)
+- [x] Dashboard gebaut (Übersicht, Signale, Depot & Orders, Backtest, Akademie mit 12 Lektionen/Quiz/Glossar, Einstellungen)
 
-## Nächster Schritt: das Dashboard
+## Dashboard (Anforderungen, umgesetzt)
 
 Ersetzt `docs/index.html`. Statische Seite auf GitHub Pages, liest nur `docs/data/*.json` (relativ: `data/status.json`). **Keine API-Schlüssel, kein direkter Alpaca-Zugriff im Browser.**
 
