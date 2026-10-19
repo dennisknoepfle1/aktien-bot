@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aktien-Bot</title>
+<!--
+  PLATZHALTER. Das richtige Dashboard wird in Claude Code gebaut (siehe CLAUDE.md -> "Nächster Schritt").
+  Diese Seite zeigt nur, dass die Daten aus docs/data/ ankommen.
+-->
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --text:#e8e6e1; --muted:#8b8f98; --up:#3fb68b; --down:#e5534b; --line:#262a33; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui, -apple-system, sans-serif; }
+  main { max-width:860px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .muted { color:var(--muted); }
+  .note { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:16px 0; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .up { color:var(--up); } .down { color:var(--down); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Aktien-Bot</h1>
+  <div class="muted" id="meta">Lade Daten …</div>
+  <div class="note">Vorläufige Seite. Das richtige Dashboard mit Lernbereich folgt – gebaut in Claude Code.</div>
+  <div id="out"></div>
+</main>
+<script>
+const fmt = (n, d = 2) => n == null ? "–" : n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+fetch("data/status.json?" + Date.now()).then(r => r.json()).then(s => {
+  const modes = { handeln: "handelt im Paper-Konto", probelauf: "Probelauf", nur_signale: "nur Signale (keine Alpaca-Schlüssel)" };
+  document.getElementById("meta").textContent =
+    `Stand ${new Date(s.updated).toLocaleString("de-DE")} · Kurse bis ${s.prices_as_of} · Modus: ${modes[s.mode] || s.mode} · Quelle: ${s.data_source}`;
+  let html = "";
+  if (s.account) html += `<div class="note">Depotwert <b>${fmt(s.account.equity)} $</b> · Cash ${fmt(s.account.cash)} $</div>`;
+  if (s.halt_reason) html += `<div class="note down">Not-Aus: ${s.halt_reason}</div>`;
+  html += `<table><tr><th>ETF</th><th class="num">Kurs</th><th class="num">200-Tage-Linie</th><th class="num">Abstand</th><th>Signal</th></tr>`;
+  for (const g of s.signals) {
+    html += `<tr><td><b>${g.symbol}</b><br><span class="muted">${g.name}</span></td>
+      <td class="num">${fmt(g.close)}</td><td class="num">${fmt(g.sma)}</td>
+      <td class="num ${g.distance_pct >= 0 ? "up" : "down"}">${fmt(g.distance_pct, 1)} %</td>
+      <td>${g.in_trend ? "halten" : "Cash"}</td></tr>`;
+  }
+  document.getElementById("out").innerHTML = html + "</table>";
+}).catch(() => { document.getElementById("meta").textContent = "Noch keine Daten – den Bot einmal unter „Actions“ starten."; });
+</script>
+</body>
+</html>

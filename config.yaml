@@ -1,0 +1,47 @@
+# ============================================================
+#  Einstellungen für den Aktien-Bot
+#  Ändern direkt auf GitHub: Datei öffnen -> Stift-Symbol -> "Commit changes"
+# ============================================================
+
+# Welche Wertpapiere der Bot handeln darf (nur US-Börse, das kann Alpaca).
+# Standard: breite US-ETFs. Ein ETF ist ein Korb aus vielen Aktien.
+# Keine Einzelaktien wie Apple oder Nvidia: Wer heute die Gewinner von gestern
+# auswählt, bekommt im Backtest traumhafte Zahlen, die in Zukunft nichts bedeuten.
+symbols:
+  SPY: "S&P 500 – die 500 größten US-Firmen"
+  QQQ: "Nasdaq 100 – technologielastig"
+  IWM: "Russell 2000 – kleinere US-Firmen"
+  DIA: "Dow Jones – 30 Großkonzerne"
+  XLK: "Sektor Technologie"
+  XLV: "Sektor Gesundheit"
+  XLF: "Sektor Finanzen"
+  XLE: "Sektor Energie"
+
+# Vergleichsmaßstab: "Einfach kaufen und liegen lassen"
+benchmark: SPY
+
+strategy:
+  # Trendfolge-Regel: Ein Wertpapier wird nur gehalten, wenn der Kurs über
+  # seinem Durchschnitt der letzten X Handelstage liegt. Sonst: Cash.
+  # 200 Tage ist der klassische Wert. Nicht so lange daran herumschrauben,
+  # bis der Backtest schön aussieht – genau das ist Overfitting.
+  sma_days: 200
+  # Jedes Wertpapier bekommt höchstens diesen Anteil vom Depot (0.125 = 12,5 %).
+  max_weight_per_symbol: 0.125
+  # Anteil des Depots, der maximal investiert wird (Rest bleibt als Puffer in Cash).
+  max_invested: 0.95
+
+backtest:
+  start: "2005-01-01"
+  # Handelskosten pro Kauf/Verkauf in Basispunkten (5 = 0,05 %). Spread + Slippage.
+  cost_bps: 5
+  start_capital: 10000
+
+risk:
+  # Not-Aus: Fällt das Depot an einem Tag um mehr als diesen Wert, handelt der Bot nicht.
+  max_daily_loss_pct: 3.0
+  # Not-Aus: Fällt das Depot mehr als diesen Wert unter den Höchststand, stoppt der Bot
+  # komplett. Freigeben: Datei bot/state.json löschen.
+  max_drawdown_pct: 20.0
+  # Kleine Umschichtungen unter diesem Dollarbetrag werden ignoriert (spart Kosten).
+  min_trade_usd: 50
