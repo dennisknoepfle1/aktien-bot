@@ -1,5 +1,51 @@
 [
  {
+  "time": "2026-10-30T15:38:27+00:00",
+  "mode": "nur_signale",
+  "log": [
+   {
+    "level": "info",
+    "msg": "Start – keine Alpaca-Schlüssel hinterlegt, berechne nur Signale"
+   },
+   {
+    "level": "info",
+    "msg": "Kurse bis 2026-10-29 geladen (Yahoo Finance)"
+   },
+   {
+    "level": "info",
+    "msg": "SPY   Kurs 769.36 | 200-Tage-Linie 725.63 | im Trend -> halten"
+   },
+   {
+    "level": "info",
+    "msg": "QQQ   Kurs 715.34 | 200-Tage-Linie 678.01 | im Trend -> halten"
+   },
+   {
+    "level": "info",
+    "msg": "IWM   Kurs 284.01 | 200-Tage-Linie 277.61 | im Trend -> halten"
+   },
+   {
+    "level": "info",
+    "msg": "DIA   Kurs 522.73 | 200-Tage-Linie 503.13 | im Trend -> halten"
+   },
+   {
+    "level": "info",
+    "msg": "XLK   Kurs 188.74 | 200-Tage-Linie 169.06 | im Trend -> halten"
+   },
+   {
+    "level": "info",
+    "msg": "XLV   Kurs 184.04 | 200-Tage-Linie 157.52 | im Trend -> halten"
+   },
+   {
+    "level": "info",
+    "msg": "XLF   Kurs 56.94 | 200-Tage-Linie 53.39 | im Trend -> halten"
+   },
+   {
+    "level": "info",
+    "msg": "XLE   Kurs 68.71 | 200-Tage-Linie 58.04 | im Trend -> halten"
+   }
+  ]
+ },
+ {
   "time": "2026-10-29T15:40:12+00:00",
   "mode": "nur_signale",
   "log": [

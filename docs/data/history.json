@@ -40,5 +40,11 @@
   "equity": null,
   "benchmark": 772.309998,
   "invested": 0.95
+ },
+ {
+  "date": "2026-10-29",
+  "equity": null,
+  "benchmark": 769.359985,
+  "invested": 0.95
  }
 ]
