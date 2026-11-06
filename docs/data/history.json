@@ -64,5 +64,11 @@
   "equity": null,
   "benchmark": 766.809998,
   "invested": 0.95
+ },
+ {
+  "date": "2026-11-05",
+  "equity": null,
+  "benchmark": 733.0,
+  "invested": 0.59375
  }
 ]
